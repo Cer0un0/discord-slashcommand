@@ -94,6 +94,11 @@ def handle_application_command(body):
         inputs = {
             'query': body['data']['options'][0]['value']
         }
+    elif command_name == 'summary':
+        command_input += f'url={body['data']['options'][0]['value']}'
+        inputs = {
+            'url': body['data']['options'][0]['value']
+        }
     # ここに他のコマンドの処理を追加する
 
     command_input += '>'

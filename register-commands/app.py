@@ -22,17 +22,6 @@ def lambda_handler(event, context):
     # コマンドのJSONペイロード
     commands = [
         {
-            'name':'hello',
-            'description':
-            'Say hello!',
-            'options': []
-        },
-        {
-            'name': 'goodbye',
-            'description': 'Say goodbye!',
-            'options': []
-        },
-        {
             'name': 'neko', 
             'description': 'にゃーん',
             'options': [
@@ -44,6 +33,18 @@ def lambda_handler(event, context):
                     }
                 ]
         },
+        {
+            'name': 'summary',
+            'description': '要約',
+            'options': [
+                {
+                    "name": "url",
+                    "description": "string",
+                    "type": 3,
+                    "required": True,
+                }
+            ]
+        }
     ]
 
     # HTTPヘッダーを設定
