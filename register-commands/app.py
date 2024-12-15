@@ -3,16 +3,23 @@ import json
 import boto3
 import requests
 
+
+# SSMパラメータ取得関数を定義
+def get_ssm_parameter(name):
+    """SSMパラメータを取得する関数。
+
+    Args:
+        name (str): 取得するパラメータの名前。
+
+    Returns:
+        str: パラメータの値。
+    """
+    ssm = boto3.client('ssm')
+    return ssm.get_parameter(Name=name, WithDecryption=True)['Parameter']['Value']
+
 # get parameters
-ssm = boto3.client('ssm')
-# fmt: off
-APP_ID = ssm.get_parameter(
-    Name='/discord/dify/DISCORD_APP_ID',
-    WithDecryption=True)['Parameter']['Value']
-DISCORD_BOT_TOKEN = ssm.get_parameter(
-    Name='/discord/dify/DISCORD_BOT_TOKEN',
-    WithDecryption=True)['Parameter']['Value']
-# fmt: on
+APP_ID = get_ssm_parameter('/discord/dify/DISCORD_APP_ID')
+DISCORD_BOT_TOKEN = get_ssm_parameter('/discord/dify/DISCORD_BOT_TOKEN')
 
 def lambda_handler(event, context):
     # Discord API URLを設定
