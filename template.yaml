@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  discord-slashcommand-lambda
+
+  Sample SAM Template for discord-slashcommand-lambda
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 900
+
+Resources:
+  DiscordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: discord/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      FunctionUrlConfig:
+        AuthType: NONE
+      Policies:
+        - Version: 2012-10-17
+          Statement:
+            - Sid: SSMParameterStoreSAccess
+              Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource:
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/discord/dify/PUBLIC_KEY
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/discord/dify/DISCORD_BOT_TOKEN
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dify/ENDPOINT
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dify/app/*
+
+  CommandRegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: register-commands/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: 2012-10-17
+          Statement:
+            - Sid: SSMParameterStoreSAccess
+              Effect: Allow
+              Action:
+                - ssm:GetParameter
+              Resource:
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/discord/dify/DISCORD_APP_ID
+                - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/discord/dify/DISCORD_BOT_TOKEN
+
+
+Outputs:
+  DiscordFunctionpUrl:
+    Description: "Function URLs endpoint"
+    Value: !GetAtt DiscordFunctionUrl.FunctionUrl
